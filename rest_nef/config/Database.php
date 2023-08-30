@@ -1,10 +1,10 @@
 <?php
   class Database {
     // DB Params
-    private $host = 'localhost';
+    private $host = '127.0.0.1';
     private $db_name = 'nef';
-    private $username = 'root';
-    private $password = '123456';
+    private $username = 'aelamrani';
+    private $password = '12Windows!';
     private $conn;
 
     // DB connect
