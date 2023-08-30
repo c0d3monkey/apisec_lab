@@ -21,7 +21,7 @@ $db = $database->connect();
 $data = json_decode(file_get_contents("php://input"));
 
 $customer_name = $data->customer_name;
-$password = $data->password; // You might want to hash the password and then check it against the DB
+$password = $data->password;
 
 // Check if customer exists with that name and password
 $query = "SELECT id FROM customer WHERE name = ? AND password = ?";
@@ -29,31 +29,35 @@ $stmt = $db->prepare($query);
 $stmt->execute([$customer_name, $password]);
 
 $matches = $stmt->rowCount();
-// Debugging info
+
 $debuggingData = [
     "input_name" => $customer_name,
-    "input_password" => $password, // Do note that showing the password in debugging might not be ideal for production
+    "input_password" => $password,
     "matches" => $matches
 ];
 
 if ($matches) {
     // Generate JWT token
-    $key = "your_secret_key";  // Make this a long, random string
+    $key = "your_secret_key";
 
-    $token = [
+    $header = [
+        'alg' => 'HS256',
+        'typ' => 'JWT',
+        'kid' => 'your_secret_key'
+    ];
+
+    $payload = [
         "iss" => "http://yourdomain.com",
         "aud" => "http://yourdomain.com",
         "iat" => time(),
-        "exp" => time() + 3600,  // Token valid for 1 hour
+        "exp" => time() + 3600,
         "data" => [
             "customer_id" => $stmt->fetchColumn()
         ]
     ];
 
-    //$jwt = JWT::encode($token, $key);
-
     echo json_encode([
-        "jwt" => JWT::encode($token, $key,'HS256'),
+        "jwt" => JWT::encode($payload, $key, 'HS256', null, $header),
         "debug" => $debuggingData
     ]);
 } else {
@@ -63,3 +67,4 @@ if ($matches) {
     ]);
 }
 ?>
+

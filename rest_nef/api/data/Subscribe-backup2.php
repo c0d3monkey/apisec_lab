@@ -5,7 +5,6 @@ error_reporting(E_ALL);
 
 require_once '../../../../vendor/autoload.php';
 use \Firebase\JWT\JWT;
-use Firebase\JWT\Key;
 
 include_once '../../config/Database.php';
 include_once '../../models/Data.php';
@@ -37,35 +36,21 @@ if (!$data) {
     exit;
 }
 
-$headersReq = apache_request_headers();
-$jwt = str_replace("Bearer ", "", $headersReq["Authorization"] ?? '');
+$headers = apache_request_headers();
+$jwt = str_replace("Bearer ", "", $headers["Authorization"] ?? '');
 
 if (!$jwt) {
     echo json_encode(["debug" => "JWT not found in Authorization header."]);
     exit;
 }
 
-// Step 1: Define your keys by kid
-$keys = [
-    "your_secret_key" => "your_secret_key"
-];
-// Step 2: Decode the header to get the kid (without verification)
-$jwt_parts = explode('.', $jwt);
-$jwt_header_json = base64_decode($jwt_parts[0]);
-$jwt_header = json_decode($jwt_header_json, true);
-$kid = $jwt_header['kid'] ?? null;
-
-// Check if the kid is known to us
-if (!isset($keys[$kid])) {
-    http_response_code(401);
-    echo json_encode(["message" => "Access denied.", "debug" => "Unknown key identifier."]);
-    exit;
-}
-
 try {
-    $key = $keys[$kid];
+    $key = "your_secret_key";
     //$decoded = JWT::decode($jwt, $key, ['HS256']);
-    $decoded = JWT::decode($jwt, new Key($key, 'HS256'));
+    //$decoded = JWT::decode($jwt, new Key($key, 'HS256');
+    $headers = new stdClass();
+    $decoded = JWT::decode($jwt, $key, $headers);
+
     $post = new Data($db);
     $post->ue = $data->ue ?? '';
     $post->imsi = $data->imsi ?? '';
