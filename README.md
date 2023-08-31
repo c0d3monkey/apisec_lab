@@ -13,7 +13,8 @@ For this JWT, we used firebase jwt library available for php / py..
 Client API Security Flow:
 ------------------
 + customer will first  authenticate, and gets also a JWT token.
-  <img width="546" alt="image" src="https://github.com/abdessamad-elamrani/apisec_lab/assets/29716902/83d2cf86-6171-4e0c-a663-e631616d4d3b">
+  <img width="547" alt="image" src="https://github.com/abdessamad-elamrani/apisec_lab/assets/29716902/08f02779-f523-46d5-b138-64bce96ad7b6">
+
 
 + This token can be added to http authorization and used to access to the right services, in this case, customer is adding a new subscriber , notice the appended token in the auth header:
   <img width="673" alt="image" src="https://github.com/abdessamad-elamrani/apisec_lab/assets/29716902/7f628dea-d025-4738-ba0e-9e36e63b02af">
